@@ -1,17 +1,28 @@
-﻿using Microsoft.Research.DynamicDataDisplay.Charts;
-using Microsoft.Research.DynamicDataDisplay.Charts.Axes;
-using Microsoft.Research.DynamicDataDisplay.DataSources;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Microsoft.Research.DynamicDataDisplay.Charts;
+using Microsoft.Research.DynamicDataDisplay.Charts.Axes;
+using Microsoft.Research.DynamicDataDisplay.DataSources;
+
 namespace MoneyVisualizer.LineGraph
 {
+    /// <summary>
+    /// The view model that represents the Line Graph view of the app.
+    /// </summary>
     public sealed class LineGraphViewModel
     {
         private readonly DateTimeAxis _dateTimeAxis;
         private readonly IntegerAxis _accountBalanceAxis;
 
+        /// <summary>
+        /// Creates a new <see cref="LineGraphViewModel"/> object.
+        /// </summary>
+        /// <param name="transactions">The collections of transactions that have occurred, in string form.</param>
+        /// <param name="transactionFactory">The <see cref="ITransactionFactory"/> that will convert the raw transactions into <see cref="ITransaction"/> objects.</param>
+        /// <param name="dateTimeAxis">The <see cref="DateTimeAxis"/> to use for data conversion so DynamicDataDisplay (D3) can display the dates/times of the transactions.</param>
+        /// <param name="accountBalanceAxis">The <see cref="IntegerAxis"/> to use for data conversion so DynamicDataDisplay (D3) can display the balances of the transactions.</param>
         public LineGraphViewModel(IReadOnlyList<string> transactions,
             ITransactionFactory transactionFactory,
             DateTimeAxis dateTimeAxis,
@@ -20,7 +31,7 @@ namespace MoneyVisualizer.LineGraph
             _dateTimeAxis = dateTimeAxis;
             _accountBalanceAxis = accountBalanceAxis;
 
-            List<DebitTransaction> transactionsList = GetDebitTransactionsFromTransactions(transactions, transactionFactory);
+            List<DebitTransaction> transactionsList = GetDebitTransactionsFromRawTransactions(transactions, transactionFactory);
 
             // Have to use doubles here instead of decimals because the charting controls need doubles.
             SortedDictionary<DateTime, double> accountBalanaceByDate = GetSortedTransactions(transactionsList);
@@ -32,9 +43,12 @@ namespace MoneyVisualizer.LineGraph
             Data = GetChartData(accountBalanaceByDate);
         }
 
+        /// <summary>
+        /// The <see cref="CompositeDataSource"/> that D3 needs to display the transactions on graphs.
+        /// </summary>
         public CompositeDataSource Data { get; }
 
-        private List<DebitTransaction> GetDebitTransactionsFromTransactions(
+        private List<DebitTransaction> GetDebitTransactionsFromRawTransactions(
             IReadOnlyList<string> transactions,
             ITransactionFactory transactionFactory)
         {

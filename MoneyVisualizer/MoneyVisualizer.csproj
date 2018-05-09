@@ -76,11 +76,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\Ui\NotifyPropertyChanged.cs" />
     <Compile Include="ITransaction.cs" />
     <Compile Include="ITransactionFactory.cs" />
     <Compile Include="LineGraph\LineGraphViewModel.cs" />
     <Compile Include="DebitTransaction.cs" />
+    <Compile Include="MainWindowViewModel.cs" />
+    <Compile Include="Helpers\Ui\RelayCommand.cs" />
     <Compile Include="TransactionsFactory.cs" />
+    <Compile Include="ValueConverters\NullObjectVisibilityConverter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -128,6 +132,7 @@
       <Name>DynamicDataDisplay</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

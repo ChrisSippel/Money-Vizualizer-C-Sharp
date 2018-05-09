@@ -4,22 +4,28 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MoneyVisualizer"
+        xmlns:ValueConverters="clr-namespace:MoneyVisualizer.ValueConverters"
         xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Window.CommandBindings>
-        <CommandBinding Command="Open" CanExecute="OpenCommand_CanExecute" Executed="OpenCommand_Executed" />
-    </Window.CommandBindings>
+    <Window.Resources>
+        <ValueConverters:NullObjectVisibilityConverter x:Key="NullObjectVisibilityConverter" />
+    </Window.Resources>
+    
     <Grid>
         <DockPanel>
             <ToolBarTray DockPanel.Dock="Top">
                 <ToolBar>
-                    <Button Command="Open" Content="Open" />
+                    <Button Command="{Binding LoadTransactionsCommand}" Content="Open" />
                 </ToolBar>
             </ToolBarTray>
             <TabControl >
                 <TabItem Header="Line Graph">
-                    <d3:ChartPlotter Name="plotter" Visibility="Hidden">
+                    <d3:ChartPlotter
+                        DataContext="{Binding LineGraphViewModel}"
+                        Name="plotter"
+                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=DataContext, Converter={StaticResource NullObjectVisibilityConverter}}"                        
+                        LegendVisible="False">
                         <d3:ChartPlotter.HorizontalAxis>
                             <d3:HorizontalDateTimeAxis Name="dateAxis" />
                         </d3:ChartPlotter.HorizontalAxis>
