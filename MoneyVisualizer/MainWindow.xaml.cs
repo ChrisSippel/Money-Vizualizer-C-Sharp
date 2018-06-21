@@ -10,7 +10,7 @@ namespace MoneyVisualizer
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel(dateAxis, balanceAxis);
+            DataContext = new MainWindowViewModel();
         }
     }
 }

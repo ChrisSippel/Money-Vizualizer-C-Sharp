@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="MoneyVisualizer.QuickInfoPage.QuickInfoPageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MoneyVisualizer.QuickInfoPage"
+             xmlns:ui="clr-namespace:MoneyVisualizer.Helpers.Ui"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ui:TwoDecimalPointValueConverter x:Key="TwoDecimalPointValueConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" FontSize="15" Content="Monthly Summary"/>
+        
+        <Label Grid.Row="1" Grid.Column="0" Content="Starting value:" />
+        <Label Grid.Row="1" Grid.Column="1" Content="{Binding StartingValue, Converter={StaticResource TwoDecimalPointValueConverter}}" />
+        
+        <Label Grid.Row="2" Grid.Column="0" Content="Ending value:" />
+        <Label Grid.Row="2" Grid.Column="1" Content="{Binding EndingValue, Converter={StaticResource TwoDecimalPointValueConverter}}" />
+
+        <Label Grid.Row="3" Grid.Column="0" Content="Ending Difference:" />
+        <Label Grid.Row="3" Grid.Column="1" Content="{Binding EndingDifference, Converter={StaticResource TwoDecimalPointValueConverter}}" />
+
+        <Label Grid.Row="4" Grid.Column="0" Content="Total Spent:" />
+        <Label Grid.Row="4" Grid.Column="1" Content="{Binding TotalSpent, Converter={StaticResource TwoDecimalPointValueConverter}}" />
+
+        <Label Grid.Row="5" Grid.Column="0" Content="Total Made:" />
+        <Label Grid.Row="5" Grid.Column="1" Content="{Binding TotalMade, Converter={StaticResource TwoDecimalPointValueConverter}}" />
+    </Grid>
+</UserControl>

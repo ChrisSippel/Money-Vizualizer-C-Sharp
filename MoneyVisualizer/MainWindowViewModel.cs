@@ -2,11 +2,10 @@
 using System.IO;
 using System.Windows.Input;
 
-using Microsoft.Research.DynamicDataDisplay.Charts;
-using Microsoft.Research.DynamicDataDisplay.Charts.Axes;
 using Microsoft.Win32;
 using MoneyVisualizer.LineGraph;
 using MoneyVisualizer.Helpers.Ui;
+using MoneyVisualizer.QuickInfoPage;
 
 namespace MoneyVisualizer
 {
@@ -15,22 +14,15 @@ namespace MoneyVisualizer
     /// </summary>
     public sealed class MainWindowViewModel : NotifyPropertyChanged
     {
-        private readonly DateTimeAxis _dateTimeAxis;
-        private readonly IntegerAxis _balanceAxis;
-
         private LineGraphViewModel _lineGraphViewModel;
+        private QuickInfoPageViewModel _quickInfoPageViewModel;
 
         /// <summary>
         /// Creates a mew <see cref="MainWindowViewModel"/> object.
         /// </summary>
-        /// <param name="dateTimeAxis">The <see cref="DateTimeAxis"/> to use for data conversion so DynamicDataDisplay (D3) can display the dates/times of the transactions.</param>
-        /// <param name="balanceAxis">The <see cref="IntegerAxis"/> to use for data conversion so DynamicDataDisplay (D3) can display the balances of the transactions.</param>
-        public MainWindowViewModel(DateTimeAxis dateTimeAxis, IntegerAxis balanceAxis)
+        public MainWindowViewModel()
         {
             LoadTransactionsCommand = new RelayCommand(LoadTransactions);
-
-            _balanceAxis = balanceAxis;
-            _dateTimeAxis = dateTimeAxis;
         }
 
         /// <summary>
@@ -59,7 +51,29 @@ namespace MoneyVisualizer
                 OnPropertyChanged();
             }
         }
-        
+
+        /// <summary>
+        /// The view model for the displaying of a summary of information for the loaded transactions.
+        /// </summary>
+        public QuickInfoPageViewModel QuickInfoPageViewModel
+        {
+            get
+            {
+                return _quickInfoPageViewModel;
+            }
+
+            set
+            {
+                if (_quickInfoPageViewModel == value)
+                {
+                    return;
+                }
+
+                _quickInfoPageViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+
         private void LoadTransactions(object obj)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -87,9 +101,11 @@ namespace MoneyVisualizer
 
             LineGraphViewModel = new LineGraphViewModel(
                 transactions,
-                new TransactionsFactory(),
-                _dateTimeAxis,
-                _balanceAxis);
+                new TransactionsFactory());
+
+            QuickInfoPageViewModel = new QuickInfoPageViewModel(
+                transactions,
+                new TransactionsFactory());
         }
     }
 }

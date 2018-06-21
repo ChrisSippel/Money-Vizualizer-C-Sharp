@@ -76,15 +76,28 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DateModel.cs" />
     <Compile Include="Helpers\Ui\NotifyPropertyChanged.cs" />
+    <Compile Include="Helpers\Ui\TwoDecimalPointValueConverter.cs" />
     <Compile Include="ITransaction.cs" />
     <Compile Include="ITransactionFactory.cs" />
+    <Compile Include="LineGraph\LineGraphUserControl.xaml.cs">
+      <DependentUpon>LineGraphUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LineGraph\LineGraphViewModel.cs" />
     <Compile Include="DebitTransaction.cs" />
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Helpers\Ui\RelayCommand.cs" />
+    <Compile Include="QuickInfoPage\QuickInfoPageView.xaml.cs">
+      <DependentUpon>QuickInfoPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="QuickInfoPage\QuickInfoPageViewModel.cs" />
     <Compile Include="TransactionsFactory.cs" />
     <Compile Include="ValueConverters\NullObjectVisibilityConverter.cs" />
+    <Page Include="LineGraph\LineGraphUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -97,6 +110,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="QuickInfoPage\QuickInfoPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -127,9 +144,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DynamicDataDisplay\DynamicDataDisplay.csproj">
-      <Project>{ecd37682-df7e-409f-912d-0965634556b5}</Project>
-      <Name>DynamicDataDisplay</Name>
+    <ProjectReference Include="..\Live-Charts-master\Core40\Core40.csproj">
+      <Project>{f261c3d7-6194-4625-9516-044081b06028}</Project>
+      <Name>Core40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Live-Charts-master\WpfView\WpfView.csproj">
+      <Project>{4d253423-ae05-47f6-a59d-9162ec0bb1f2}</Project>
+      <Name>WpfView</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

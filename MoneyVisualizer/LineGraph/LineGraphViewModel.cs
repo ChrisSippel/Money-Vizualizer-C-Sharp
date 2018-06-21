@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using Microsoft.Research.DynamicDataDisplay.Charts;
-using Microsoft.Research.DynamicDataDisplay.Charts.Axes;
-using Microsoft.Research.DynamicDataDisplay.DataSources;
+using LiveCharts;
+using LiveCharts.Configurations;
+using LiveCharts.Wpf;
 
 namespace MoneyVisualizer.LineGraph
 {
@@ -13,40 +12,59 @@ namespace MoneyVisualizer.LineGraph
     /// </summary>
     public sealed class LineGraphViewModel
     {
-        private readonly DateTimeAxis _dateTimeAxis;
-        private readonly IntegerAxis _accountBalanceAxis;
-
         /// <summary>
         /// Creates a new <see cref="LineGraphViewModel"/> object.
         /// </summary>
         /// <param name="transactions">The collections of transactions that have occurred, in string form.</param>
         /// <param name="transactionFactory">The <see cref="ITransactionFactory"/> that will convert the raw transactions into <see cref="ITransaction"/> objects.</param>
-        /// <param name="dateTimeAxis">The <see cref="DateTimeAxis"/> to use for data conversion so DynamicDataDisplay (D3) can display the dates/times of the transactions.</param>
-        /// <param name="accountBalanceAxis">The <see cref="IntegerAxis"/> to use for data conversion so DynamicDataDisplay (D3) can display the balances of the transactions.</param>
-        public LineGraphViewModel(IReadOnlyList<string> transactions,
-            ITransactionFactory transactionFactory,
-            DateTimeAxis dateTimeAxis,
-            IntegerAxis accountBalanceAxis)
+        public LineGraphViewModel(
+            IReadOnlyList<string> transactions,
+            ITransactionFactory transactionFactory)
         {
-            _dateTimeAxis = dateTimeAxis;
-            _accountBalanceAxis = accountBalanceAxis;
+            var dayConfig = Mappers.Xy<DateModel>()
+                .X(dateModel => dateModel.DateTime.ToFileTimeUtc())
+                .Y(dateModel => dateModel.Value);
 
-            List<DebitTransaction> transactionsList = GetDebitTransactionsFromRawTransactions(transactions, transactionFactory);
+            var debitTransactions = GetDebitTransactionsFromRawTransactions(transactions, transactionFactory);
+            var sortedTransactions = GetSortedTransactions(debitTransactions);
+            HandlePossibleFirstDayMissingTransaction(sortedTransactions);
+            PopulateMissingDates(sortedTransactions, debitTransactions);
 
-            // Have to use doubles here instead of decimals because the charting controls need doubles.
-            SortedDictionary<DateTime, double> accountBalanaceByDate = GetSortedTransactions(transactionsList);
+            var chartValues = new ChartValues<DateModel>();
+            chartValues.Add(new DateModel
+            {
+                DateTime = sortedTransactions.First().Key.Subtract(TimeSpan.FromDays(1)),
+                Value = (double)(debitTransactions.First().AccountBalance - debitTransactions.First().Value),
+            });
 
-            HandlePossibleFirstDayMissingTransaction(accountBalanaceByDate);
+            foreach (var transaction in sortedTransactions)
+            {
+                chartValues.Add(new DateModel
+                {
+                    DateTime = transaction.Key,
+                    Value = transaction.Value,
+                });
+            }
 
-            PopulateMissingDates(accountBalanaceByDate, transactionsList);
+            SeriesCollection = new SeriesCollection(dayConfig)
+            {
+                new LineSeries
+                {
+                    Title = "Account Balance",
+                    Values = chartValues
+                },
+            };
 
-            Data = GetChartData(accountBalanaceByDate);
+            YFormatter = value =>
+            {
+                var dateTime = DateTime.FromFileTimeUtc((long)value);
+                return dateTime.ToShortDateString();
+            };
         }
 
-        /// <summary>
-        /// The <see cref="CompositeDataSource"/> that D3 needs to display the transactions on graphs.
-        /// </summary>
-        public CompositeDataSource Data { get; }
+        public SeriesCollection SeriesCollection { get; set; }
+        public string[] Labels { get; set; }
+        public Func<double, string> YFormatter { get; set; }
 
         private List<DebitTransaction> GetDebitTransactionsFromRawTransactions(
             IReadOnlyList<string> transactions,
@@ -112,17 +130,6 @@ namespace MoneyVisualizer.LineGraph
                     accountBalanaceByDate.Add(date, accountBalanaceByDate[previousDate]);
                 }
             }
-        }
-
-        private CompositeDataSource GetChartData(SortedDictionary<DateTime, double> accountBalanaceByDate)
-        {
-            var datesDataSource = new EnumerableDataSource<DateTime>(accountBalanaceByDate.Keys);
-            datesDataSource.SetXMapping(x => _dateTimeAxis.ConvertToDouble(x));
-
-            var accountBalanceDataSource = new EnumerableDataSource<double>(accountBalanaceByDate.Values);
-            accountBalanceDataSource.SetYMapping(y => _accountBalanceAxis.ConvertFromDouble(y));
-
-            return new CompositeDataSource(datesDataSource, accountBalanceDataSource);
         }
     }
 }

@@ -4,12 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MoneyVisualizer"
-        xmlns:ValueConverters="clr-namespace:MoneyVisualizer.ValueConverters"
-        xmlns:d3="http://research.microsoft.com/DynamicDataDisplay/1.0"
+        xmlns:valueConverters="clr-namespace:MoneyVisualizer.ValueConverters"
+        
+        xmlns:lineGraph="clr-namespace:MoneyVisualizer.LineGraph"
+        xmlns:quickInfoPage="clr-namespace:MoneyVisualizer.QuickInfoPage"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Window.Resources>
-        <ValueConverters:NullObjectVisibilityConverter x:Key="NullObjectVisibilityConverter" />
+        <valueConverters:NullObjectVisibilityConverter x:Key="NullObjectVisibilityConverter" />
     </Window.Resources>
     
     <Grid>
@@ -20,23 +22,11 @@
                 </ToolBar>
             </ToolBarTray>
             <TabControl >
+                <TabItem Header="Summary">
+                    <quickInfoPage:QuickInfoPageView  DataContext="{Binding QuickInfoPageViewModel}" />
+                </TabItem>
                 <TabItem Header="Line Graph">
-                    <d3:ChartPlotter
-                        DataContext="{Binding LineGraphViewModel}"
-                        Name="plotter"
-                        Visibility="{Binding RelativeSource={RelativeSource Self}, Path=DataContext, Converter={StaticResource NullObjectVisibilityConverter}}"                        
-                        LegendVisible="False">
-                        <d3:ChartPlotter.HorizontalAxis>
-                            <d3:HorizontalDateTimeAxis Name="dateAxis" />
-                        </d3:ChartPlotter.HorizontalAxis>
-                        <d3:ChartPlotter.VerticalAxis>
-                            <d3:VerticalIntegerAxis Name="balanceAxis"/>
-                        </d3:ChartPlotter.VerticalAxis>
-
-                        <d3:VerticalAxisTitle FontFamily="Georgia" Content="Account Balance" />
-                        <d3:HorizontalAxisTitle FontFamily="Georgia" Content="Date" />
-                        <d3:LineGraph Name="graph" DataSource="{Binding Data}"/>
-                    </d3:ChartPlotter>
+                    <lineGraph:LineGraphUserControl  DataContext="{Binding LineGraphViewModel}" />
                 </TabItem>
                 <TabItem Header="Pie Chart">
 

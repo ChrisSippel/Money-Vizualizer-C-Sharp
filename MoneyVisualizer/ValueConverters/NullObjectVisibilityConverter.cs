@@ -6,7 +6,7 @@ namespace MoneyVisualizer.ValueConverters
 {
     /// <summary>
     /// Converts a null object into <seealso cref="Visibility.Hidden"/> while a non-null
-    /// object reults <seealso cref="Visibility.Visibility"/>.
+    /// object reults <seealso cref="Visibility"/>.
     /// </summary>
     public sealed class NullObjectVisibilityConverter : IValueConverter
     {
