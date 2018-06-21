@@ -93,7 +93,14 @@
     </Compile>
     <Compile Include="QuickInfoPage\QuickInfoPageViewModel.cs" />
     <Compile Include="TransactionsFactory.cs" />
-    <Compile Include="ValueConverters\NullObjectVisibilityConverter.cs" />
+    <Compile Include="TransactionsList\TransactionsListView.xaml.cs">
+      <DependentUpon>TransactionsListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TransactionsList\TransactionsListViewModel.cs" />
+    <Compile Include="TransactionsList\TransactionView.xaml.cs">
+      <DependentUpon>TransactionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TransactionsList\TransactionViewModel.cs" />
     <Page Include="LineGraph\LineGraphUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -111,6 +118,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="QuickInfoPage\QuickInfoPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TransactionsList\TransactionsListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TransactionsList\TransactionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

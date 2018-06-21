@@ -3,16 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MoneyVisualizer"
-        xmlns:valueConverters="clr-namespace:MoneyVisualizer.ValueConverters"
-        
         xmlns:lineGraph="clr-namespace:MoneyVisualizer.LineGraph"
         xmlns:quickInfoPage="clr-namespace:MoneyVisualizer.QuickInfoPage"
+        xmlns:transactionsList="clr-namespace:MoneyVisualizer.TransactionsList"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Window.Resources>
-        <valueConverters:NullObjectVisibilityConverter x:Key="NullObjectVisibilityConverter" />
-    </Window.Resources>
     
     <Grid>
         <DockPanel>
@@ -24,6 +19,9 @@
             <TabControl >
                 <TabItem Header="Summary">
                     <quickInfoPage:QuickInfoPageView  DataContext="{Binding QuickInfoPageViewModel}" />
+                </TabItem>
+                <TabItem Header="Transactions List">
+                    <transactionsList:TransactionsListView DataContext="{Binding TransactionsListViewModel}" />
                 </TabItem>
                 <TabItem Header="Line Graph">
                     <lineGraph:LineGraphUserControl  DataContext="{Binding LineGraphViewModel}" />

@@ -6,6 +6,7 @@ using Microsoft.Win32;
 using MoneyVisualizer.LineGraph;
 using MoneyVisualizer.Helpers.Ui;
 using MoneyVisualizer.QuickInfoPage;
+using MoneyVisualizer.TransactionsList;
 
 namespace MoneyVisualizer
 {
@@ -16,6 +17,7 @@ namespace MoneyVisualizer
     {
         private LineGraphViewModel _lineGraphViewModel;
         private QuickInfoPageViewModel _quickInfoPageViewModel;
+        private TransactionsListViewModel _transactionsListViewModel;
 
         /// <summary>
         /// Creates a mew <see cref="MainWindowViewModel"/> object.
@@ -74,6 +76,28 @@ namespace MoneyVisualizer
             }
         }
 
+        /// <summary>
+        /// The view model for the displaying of all of the loaded transactions.
+        /// </summary>
+        public TransactionsListViewModel TransactionsListViewModel
+        {
+            get
+            {
+                return _transactionsListViewModel;
+            }
+
+            set
+            {
+                if (_transactionsListViewModel == value)
+                {
+                    return;
+                }
+
+                _transactionsListViewModel = value;
+                OnPropertyChanged();
+            }
+        }
+
         private void LoadTransactions(object obj)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -104,6 +128,10 @@ namespace MoneyVisualizer
                 new TransactionsFactory());
 
             QuickInfoPageViewModel = new QuickInfoPageViewModel(
+                transactions,
+                new TransactionsFactory());
+
+            TransactionsListViewModel = new TransactionsListViewModel(
                 transactions,
                 new TransactionsFactory());
         }
