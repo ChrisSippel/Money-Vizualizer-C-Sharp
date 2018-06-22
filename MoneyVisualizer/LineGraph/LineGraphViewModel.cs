@@ -31,16 +31,15 @@ namespace MoneyVisualizer.LineGraph
                 .X(dateModel => dateModel.DateTime.ToFileTimeUtc())
                 .Y(dateModel => dateModel.Value);
 
-            var debitTransactions = GetDebitTransactionsFromRawTransactions(transactions);
-            var sortedTransactions = GetSortedTransactions(debitTransactions);
+            var sortedTransactions = GetSortedTransactions(transactions);
             HandlePossibleFirstDayMissingTransaction(sortedTransactions);
-            PopulateMissingDates(sortedTransactions, debitTransactions);
+            PopulateMissingDates(sortedTransactions, transactions);
 
             var chartValues = new ChartValues<DateModel>();
             chartValues.Add(new DateModel
             {
                 DateTime = sortedTransactions.First().Key.Subtract(TimeSpan.FromDays(1)),
-                Value = (double)(debitTransactions.First().AccountBalance - debitTransactions.First().Value),
+                Value = (double)(transactions.First().AccountBalance - transactions.First().Value),
             });
 
             foreach (var transaction in sortedTransactions)
@@ -68,18 +67,12 @@ namespace MoneyVisualizer.LineGraph
             };
         }
 
-        private List<DebitTransaction> GetDebitTransactionsFromRawTransactions(IReadOnlyList<ITransaction> transactions)
-        {
-            List<DebitTransaction> transactionsList = transactions.Cast<DebitTransaction>().ToList();
-            return transactionsList;
-        }
-
-        private SortedDictionary<DateTime, double> GetSortedTransactions(IReadOnlyList<DebitTransaction> transactionsList)
+        private SortedDictionary<DateTime, double> GetSortedTransactions(IReadOnlyList<ITransaction> transactionsList)
         {
             // Have to use doubles here instead of decimals because the charting controls need doubles.
             SortedDictionary<DateTime, double> accountBalanaceByDate = new SortedDictionary<DateTime, double>();
             var orderedTransactions = transactionsList.GroupBy(x => x.DateTime);
-            foreach (IGrouping<DateTime, DebitTransaction> orderedTransaction in orderedTransactions)
+            foreach (IGrouping<DateTime, ITransaction> orderedTransaction in orderedTransactions)
             {
                 accountBalanaceByDate.Add(orderedTransaction.Key, Convert.ToDouble(orderedTransaction.Last().AccountBalance));
             }
@@ -105,7 +98,7 @@ namespace MoneyVisualizer.LineGraph
 
         private void PopulateMissingDates(
             SortedDictionary<DateTime, double> accountBalanaceByDate,
-            List<DebitTransaction> transactionsList)
+            IReadOnlyList<ITransaction> transactionsList)
         {
             int year = transactionsList.First().DateTime.Year;
             int month = transactionsList.First().DateTime.Month;

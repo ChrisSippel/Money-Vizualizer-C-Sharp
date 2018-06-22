@@ -183,7 +183,11 @@ namespace MoneyVisualizer
             var transactionsList = new List<ITransaction>();
             foreach (var transaction in transactions)
             {
-                transactionsList.Add(transactionsFactory.CreateDebitTransaction(transaction));
+                var createdTransaction = transactionsFactory.CreateTransaction(transaction);
+                if (createdTransaction != NoneTransaction.Instance)
+                {
+                    transactionsList.Add(createdTransaction);
+                }
             }
 
             Transactions = transactionsList;
@@ -209,7 +213,7 @@ namespace MoneyVisualizer
             {
                 foreach (var transaction in Transactions)
                 {
-                    writer.WriteLine($"{transaction.DateTime.ToShortDateString()}, {transaction.Vendor}, {transaction.Value}, {transaction.Category}, {transaction.Description}");
+                    writer.WriteLine($"{transaction.DateTime.ToString("MM'/'dd'/'yyyy")},{transaction.Vendor},{transaction.Value},{transaction.AccountBalance},{transaction.Category},{transaction.Description}");
                 }
             }
 

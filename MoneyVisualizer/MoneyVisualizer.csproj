@@ -95,7 +95,7 @@
       <DependentUpon>LineGraphUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="LineGraph\LineGraphViewModel.cs" />
-    <Compile Include="DebitTransaction.cs" />
+    <Compile Include="Transaction.cs" />
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Helpers\Ui\RelayCommand.cs" />
     <Compile Include="PieChart\PieChartView.xaml.cs">

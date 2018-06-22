@@ -25,6 +25,11 @@ namespace MoneyVisualizer
         decimal Value { get; }
 
         /// <summary>
+        /// The balance of the bank account minus the <see cref="Value"/> of the transaction.
+        /// </summary>
+        decimal AccountBalance { get; }
+
+        /// <summary>
         /// The vendor the transaction happened with.
         /// </summary>
         string Vendor { get; set; }
@@ -53,6 +58,8 @@ namespace MoneyVisualizer
         }
 
         public decimal Value { get; } = decimal.MinValue;
+
+        public decimal AccountBalance { get; } = decimal.MinValue;
 
         public string Vendor
         {

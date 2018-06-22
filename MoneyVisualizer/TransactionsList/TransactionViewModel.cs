@@ -12,7 +12,9 @@ namespace MoneyVisualizer.TransactionsList
         public TransactionViewModel(ITransaction transaction)
         {
             _transaction = transaction;
-            Category = CategoryTypes.First();
+            Category = !CategoryTypes.Contains(transaction.Category)
+                ? CategoryTypes.First()
+                : transaction.Category;
         }
 
         public IEnumerable<string> CategoryTypes { get; } = new List<string>

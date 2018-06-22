@@ -29,9 +29,9 @@ namespace MoneyVisualizer.QuickInfoPage
 
         public double TotalMade { get; }
 
-        private List<DebitTransaction> GetDebitTransactionsFromRawTransactions(IReadOnlyList<ITransaction> transactions)
+        private List<Transaction> GetDebitTransactionsFromRawTransactions(IReadOnlyList<ITransaction> transactions)
         {
-            List<DebitTransaction> transactionsList = transactions.Cast<DebitTransaction>().ToList();
+            List<Transaction> transactionsList = transactions.Cast<Transaction>().ToList();
             return transactionsList;
         }
     }

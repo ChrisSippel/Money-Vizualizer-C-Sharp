@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace MoneyVisualizer.TransactionsList
 {
@@ -13,7 +9,7 @@ namespace MoneyVisualizer.TransactionsList
             var transactionViews = new TransactionView[transactions.Count];
             for (int i = 0; i < transactions.Count; i++)
             {
-                var transaction = (DebitTransaction)transactions[i];
+                var transaction = (Transaction)transactions[i];
                 var transactionViewModel = new TransactionViewModel(transaction);
                 var transactionView = new TransactionView
                 {
