@@ -1,15 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MoneyVisualizer
 {
+    public enum SupportedTransactionTypes
+    {
+        TdBankAccount,
+        TdCreditCard,
+        CapitalOneCreditCard,
+        MoneyVisualizer,
+    }
+
     public sealed class TransactionsFactory : ITransactionFactory
     {
-        public ITransaction CreateTransaction(string transaction)
+        public ITransaction CreateTransaction(string transaction, SupportedTransactionTypes transactionType)
         {
             if (string.IsNullOrWhiteSpace(transaction))
             {
@@ -17,20 +20,20 @@ namespace MoneyVisualizer
             }
 
             string[] sections = transaction.Split(',');
-            if (sections.Length == 5)
+            switch (transactionType)
             {
-                return CreateBankTransaction(sections);
-            }
+                case SupportedTransactionTypes.TdBankAccount:
+                    return CreateTdBankAccountTransaction(sections);
 
-            if (sections.Length == 6)
-            {
-                return CreateMoneyVisualizerTransaction(sections);
-            }
+                case SupportedTransactionTypes.MoneyVisualizer:
+                    return CreateMoneyVisualizerTransaction(sections);
 
-            return NoneTransaction.Instance;
+                default:
+                    return NoneTransaction.Instance;
+            }
         }
 
-        private static ITransaction CreateBankTransaction(string[] sections)
+        private static ITransaction CreateTdBankAccountTransaction(string[] sections)
         {
             const int dateTimeIndex = 0;
             const int descriptionIndex = 1;
@@ -38,7 +41,7 @@ namespace MoneyVisualizer
             const int creditValueIndex = 3;
             const int accountBalanceIndex = 4;
 
-            DateTime dateTime = DateTime.ParseExact(sections[dateTimeIndex], "MM/dd/yyyy", CultureInfo.InvariantCulture);
+            DateTime dateTime = DateTime.Parse(sections[dateTimeIndex]);
             string description = sections[descriptionIndex];
 
             decimal value;
@@ -54,7 +57,7 @@ namespace MoneyVisualizer
 
             decimal accountBalance = decimal.Parse(sections[accountBalanceIndex]);
 
-            return new Transaction(dateTime, description, value, accountBalance, string.Empty, "Unknown");
+            return new Transaction(dateTime, description, value, accountBalance, String.Empty, "Unknown");
         }
 
         private static ITransaction CreateMoneyVisualizerTransaction(string[] sections)
@@ -66,19 +69,19 @@ namespace MoneyVisualizer
             const int categoryIndex = 4;
             const int descriptionIndex = 5;
 
-            DateTime dateTime = DateTime.ParseExact(sections[dateTimeIndex], "MM'/'dd'/'yyyy", CultureInfo.InvariantCulture);
+            DateTime dateTime = DateTime.Parse(sections[dateTimeIndex]);
             string vendor = sections[vendorIndex];
 
             decimal value;
-            if (string.IsNullOrWhiteSpace(sections[valueIndex]) ||
-                !decimal.TryParse(sections[valueIndex], out value))
+            if (String.IsNullOrWhiteSpace(sections[valueIndex]) ||
+                !Decimal.TryParse(sections[valueIndex], out value))
             {
                 return NoneTransaction.Instance;
             }
 
             decimal accountBalance;
-            if (string.IsNullOrWhiteSpace(sections[accountBalanceIndex]) ||
-                !decimal.TryParse(sections[accountBalanceIndex], out accountBalance))
+            if (String.IsNullOrWhiteSpace(sections[accountBalanceIndex]) ||
+                !Decimal.TryParse(sections[accountBalanceIndex], out accountBalance))
             {
                 return NoneTransaction.Instance;
             }

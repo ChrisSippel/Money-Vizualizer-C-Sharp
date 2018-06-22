@@ -16,7 +16,14 @@
         <DockPanel>
             <ToolBarTray DockPanel.Dock="Top">
                 <ToolBar>
-                    <Button Command="{Binding LoadTransactionsCommand}" Content="Open" />
+                    <Menu>
+                        <MenuItem Header="Open">
+                            <MenuItem Header="Money Visualizer" Command="{Binding LoadMoneyVisualizerTransactionsCommand}" />
+                            <MenuItem Header="TD Bank Account" Command="{Binding LoadTdBankAccountTransactionsCommand}" />
+                            <MenuItem Header="TD Credit Card" />
+                            <MenuItem Header="Capital One Credit Card" />
+                        </MenuItem>
+                    </Menu>
                     <Button Command="{Binding SaveTransactionsCommand}" Content="Save" />
                 </ToolBar>
             </ToolBarTray>

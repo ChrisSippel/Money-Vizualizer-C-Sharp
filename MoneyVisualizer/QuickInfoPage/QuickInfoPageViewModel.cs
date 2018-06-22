@@ -1,38 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MoneyVisualizer.Helpers.EventHandlers;
 
 namespace MoneyVisualizer.QuickInfoPage
 {
     public sealed class QuickInfoPageViewModel
     {
-        public QuickInfoPageViewModel(IReadOnlyList<ITransaction> transactions)
-        {
-            var debitTransactions = GetDebitTransactionsFromRawTransactions(transactions);
+        private readonly IReadOnlyList<ITransaction> _transactions;
 
-            StartingValue = debitTransactions.First().AccountBalance - debitTransactions.First().Value;
-            EndingValue = debitTransactions.Last().AccountBalance;
-            EndingDifference = EndingValue - StartingValue;
-            TotalSpent = (double)debitTransactions.Where(x => x.Value < 0).Sum(x => x.Value) * -1;
-            TotalMade = (double)debitTransactions.Where(x => x.Value > 0).Sum(x => x.Value);
+        public QuickInfoPageViewModel(ObservableCollection<ITransaction> transactions)
+        {
+            _transactions = transactions;
+
+            foreach (var transaction in transactions)
+            {
+                transaction.PropertyChanged += new WeakEventHandler<PropertyChangedEventArgs>(OnPropertyChanged).Handler;
+            }
+
+            transactions.CollectionChanged += TransactionsOnCollectionChanged;
+
+            SetProperties();
         }
 
-        public decimal StartingValue { get; }
+        public decimal StartingValue { get; private set; }
 
-        public decimal EndingValue { get; }
+        public decimal EndingValue { get; private set; }
 
-        public decimal EndingDifference { get; }
+        public decimal EndingDifference { get; private set; }
 
-        public double TotalSpent { get; }
+        public double TotalSpent { get; private set; }
 
-        public double TotalMade { get; }
+        public double TotalMade { get; private set; }
 
-        private List<Transaction> GetDebitTransactionsFromRawTransactions(IReadOnlyList<ITransaction> transactions)
+        private void SetProperties()
         {
-            List<Transaction> transactionsList = transactions.Cast<Transaction>().ToList();
-            return transactionsList;
+            StartingValue = _transactions.First().AccountBalance - _transactions.First().Value;
+            EndingValue = _transactions.Last().AccountBalance;
+            EndingDifference = EndingValue - StartingValue;
+            TotalSpent = (double)_transactions.Where(x => x.Value < 0).Sum(x => x.Value) * -1;
+            TotalMade = (double)_transactions.Where(x => x.Value > 0).Sum(x => x.Value);
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            SetProperties();
+        }
+
+        private void TransactionsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
+        {
+            SetProperties();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -24,23 +25,30 @@ namespace MoneyVisualizer
         private QuickInfoPageViewModel _quickInfoPageViewModel;
         private TransactionsListViewModel _transactionsListViewModel;
         private PieChartViewModel _pieChartViewModel;
-        private IReadOnlyList<ITransaction> _transactions;
+        private ObservableCollection<ITransaction> _transactions;
 
         /// <summary>
         /// Creates a mew <see cref="MainWindowViewModel"/> object.
         /// </summary>
         public MainWindowViewModel(IDialogService dialogService)
         {
-            LoadTransactionsCommand = new RelayCommand(LoadTransactions);
+            LoadTdBankAccountTransactionsCommand = new RelayCommand(LoadTdBankAccountTransactions);
+            LoadMoneyVisualizerTransactionsCommand = new RelayCommand(LoadMoneyVisualizerTransactions);
+
             SaveTransactionsCommand = new RelayCommand(SaveTransactions);
 
             _dialogService = dialogService;
         }
 
         /// <summary>
-        /// The command to call when the user wants to load transactions.
+        /// The command to call when the user wants to load transactions from a TD bank account.
         /// </summary>
-        public ICommand LoadTransactionsCommand { get; }
+        public ICommand LoadTdBankAccountTransactionsCommand { get; }
+
+        /// <summary>
+        /// The command to call when the user wants to load transactions saved from Money Visualizer.
+        /// </summary>
+        public ICommand LoadMoneyVisualizerTransactionsCommand { get; }
 
         /// <summary>
         /// The command to call when the user wants to load transactions.
@@ -50,7 +58,7 @@ namespace MoneyVisualizer
         /// <summary>
         /// The collection of transactions that have been loaded.
         /// </summary>
-        public IReadOnlyList<ITransaction> Transactions
+        public ObservableCollection<ITransaction> Transactions
         {
             get
             {
@@ -154,7 +162,17 @@ namespace MoneyVisualizer
             }
         }
 
-        private void LoadTransactions(object obj)
+        private void LoadTdBankAccountTransactions(object obj)
+        {
+            LoadTransactions(SupportedTransactionTypes.TdBankAccount);
+        }
+
+        private void LoadMoneyVisualizerTransactions(object obj)
+        {
+            LoadTransactions(SupportedTransactionTypes.MoneyVisualizer);
+        }
+
+        private void LoadTransactions(SupportedTransactionTypes transactionsType)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -180,10 +198,10 @@ namespace MoneyVisualizer
             }
 
             var transactionsFactory = new TransactionsFactory();
-            var transactionsList = new List<ITransaction>();
+            var transactionsList = new ObservableCollection<ITransaction>();
             foreach (var transaction in transactions)
             {
-                var createdTransaction = transactionsFactory.CreateTransaction(transaction);
+                var createdTransaction = transactionsFactory.CreateTransaction(transaction, transactionsType);
                 if (createdTransaction != NoneTransaction.Instance)
                 {
                     transactionsList.Add(createdTransaction);

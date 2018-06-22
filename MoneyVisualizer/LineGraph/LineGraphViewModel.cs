@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using LiveCharts;
 using LiveCharts.Configurations;
 using LiveCharts.Wpf;
+using MoneyVisualizer.Helpers.EventHandlers;
 
 namespace MoneyVisualizer.LineGraph
 {
@@ -12,34 +16,45 @@ namespace MoneyVisualizer.LineGraph
     /// </summary>
     public sealed class LineGraphViewModel
     {
+        private readonly IReadOnlyList<ITransaction> _transactions;
+
         /// <summary>
         /// Creates a new <see cref="LineGraphViewModel"/> object.
         /// </summary>
         /// <param name="transactions">The collections of transactions that have occurred, in <see cref="ITransaction"/> form.</param>
-        public LineGraphViewModel(IReadOnlyList<ITransaction> transactions)
+        public LineGraphViewModel(ObservableCollection<ITransaction> transactions)
         {
-            LoadTransactionsIntoChart(transactions);
+            foreach (var transaction in transactions)
+            {
+                transaction.PropertyChanged += new WeakEventHandler<PropertyChangedEventArgs>(OnPropertyChanged).Handler;
+            }
+
+            transactions.CollectionChanged += TransactionsOnCollectionChanged;
+
+            _transactions = transactions;
+
+            LoadTransactionsIntoChart();
         }
 
         public SeriesCollection SeriesCollection { get; set; }
         public string[] Labels { get; set; }
         public Func<double, string> YFormatter { get; set; }
 
-        private void LoadTransactionsIntoChart(IReadOnlyList<ITransaction> transactions)
+        private void LoadTransactionsIntoChart()
         {
             var dayConfig = Mappers.Xy<DateModel>()
                 .X(dateModel => dateModel.DateTime.ToFileTimeUtc())
                 .Y(dateModel => dateModel.Value);
 
-            var sortedTransactions = GetSortedTransactions(transactions);
+            var sortedTransactions = GetSortedTransactions(_transactions);
             HandlePossibleFirstDayMissingTransaction(sortedTransactions);
-            PopulateMissingDates(sortedTransactions, transactions);
+            PopulateMissingDates(sortedTransactions, _transactions);
 
             var chartValues = new ChartValues<DateModel>();
             chartValues.Add(new DateModel
             {
                 DateTime = sortedTransactions.First().Key.Subtract(TimeSpan.FromDays(1)),
-                Value = (double)(transactions.First().AccountBalance - transactions.First().Value),
+                Value = (double)(_transactions.First().AccountBalance - _transactions.First().Value),
             });
 
             foreach (var transaction in sortedTransactions)
@@ -117,6 +132,16 @@ namespace MoneyVisualizer.LineGraph
                     accountBalanaceByDate.Add(date, accountBalanaceByDate[previousDate]);
                 }
             }
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            LoadTransactionsIntoChart();
+        }
+
+        private void TransactionsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
+        {
+            LoadTransactionsIntoChart();
         }
     }
 }

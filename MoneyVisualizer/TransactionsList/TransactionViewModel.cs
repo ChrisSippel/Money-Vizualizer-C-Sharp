@@ -23,6 +23,7 @@ namespace MoneyVisualizer.TransactionsList
             "Savings",
             "Mortgage",
             "Bills",
+            "Credit Card",
             "Car payment",
             "Eating out",
             "Groceries",

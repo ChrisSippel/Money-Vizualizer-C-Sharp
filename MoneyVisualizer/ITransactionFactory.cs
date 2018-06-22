@@ -2,6 +2,6 @@
 {
     public interface ITransactionFactory
     {
-        ITransaction CreateTransaction(string transaction);
+        ITransaction CreateTransaction(string transaction, SupportedTransactionTypes transactionType);
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LiveCharts;
 using LiveCharts.Wpf;
 using MoneyVisualizer.Helpers.EventHandlers;
@@ -12,15 +12,17 @@ namespace MoneyVisualizer.PieChart
 {
     public sealed class PieChartViewModel
     {
-        private IReadOnlyList<ITransaction> _transactions;
-        private Func<ChartPoint, string> _pointLabel;
+        private readonly IReadOnlyList<ITransaction> _transactions;
+        private readonly Func<ChartPoint, string> _pointLabel;
 
-        public PieChartViewModel(IReadOnlyList<ITransaction> transactions)
+        public PieChartViewModel(ObservableCollection<ITransaction> transactions)
         {
             foreach (var transaction in transactions)
             {
                 transaction.PropertyChanged += new WeakEventHandler<PropertyChangedEventArgs>(OnPropertyChanged).Handler;
             }
+
+            transactions.CollectionChanged += TransactionsOnCollectionChanged;
 
             _pointLabel = chartPoint => $"{chartPoint.Y} ({chartPoint.Participation:P})";
             PointLabel = chartPoint => $"{chartPoint.Y} ({chartPoint.Participation:P})";
@@ -52,6 +54,11 @@ namespace MoneyVisualizer.PieChart
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            LoadTransactionsIntoPieChart();
+        }
+
+        private void TransactionsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
         {
             LoadTransactionsIntoPieChart();
         }
