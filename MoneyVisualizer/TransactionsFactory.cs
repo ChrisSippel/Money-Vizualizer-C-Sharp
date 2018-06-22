@@ -25,6 +25,9 @@ namespace MoneyVisualizer
                 case SupportedTransactionTypes.TdBankAccount:
                     return CreateTdBankAccountTransaction(sections);
 
+                case SupportedTransactionTypes.TdCreditCard:
+                    return CreateTdCreditCardTransaction(sections);
+
                 case SupportedTransactionTypes.MoneyVisualizer:
                     return CreateMoneyVisualizerTransaction(sections);
 
@@ -53,6 +56,38 @@ namespace MoneyVisualizer
             else
             {
                 decimal.TryParse(sections[creditValueIndex], out value);
+            }
+
+            decimal accountBalance = decimal.Parse(sections[accountBalanceIndex]);
+
+            return new Transaction(dateTime, description, value, accountBalance, String.Empty, "Unknown");
+        }
+
+        private static ITransaction CreateTdCreditCardTransaction(string[] sections)
+        {
+            const int dateTimeIndex = 0;
+            const int descriptionIndex = 1;
+            const int costValueIndex = 2;
+            const int creditValueIndex = 3;
+            const int accountBalanceIndex = 4;
+
+            DateTime dateTime = DateTime.Parse(sections[dateTimeIndex]);
+            string description = sections[descriptionIndex];
+
+            decimal value;
+            if (!string.IsNullOrWhiteSpace(sections[costValueIndex]))
+            {
+                decimal.TryParse(sections[costValueIndex], out value);
+                value *= -1;
+            }
+            else
+            {
+                decimal.TryParse(sections[creditValueIndex], out value);
+            }
+
+            if (value > 0)
+            {
+                return NoneTransaction.Instance;
             }
 
             decimal accountBalance = decimal.Parse(sections[accountBalanceIndex]);

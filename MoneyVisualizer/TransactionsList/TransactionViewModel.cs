@@ -20,6 +20,7 @@ namespace MoneyVisualizer.TransactionsList
         public IEnumerable<string> CategoryTypes { get; } = new List<string>
         {
             "Unknown",
+            "Income",
             "Savings",
             "Mortgage",
             "Bills",

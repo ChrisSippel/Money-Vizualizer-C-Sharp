@@ -20,7 +20,7 @@
                         <MenuItem Header="Open">
                             <MenuItem Header="Money Visualizer" Command="{Binding LoadMoneyVisualizerTransactionsCommand}" />
                             <MenuItem Header="TD Bank Account" Command="{Binding LoadTdBankAccountTransactionsCommand}" />
-                            <MenuItem Header="TD Credit Card" />
+                            <MenuItem Header="TD Credit Card" Command="{Binding LoadTdCreditCardTransactionsCommand}" />
                             <MenuItem Header="Capital One Credit Card" />
                         </MenuItem>
                     </Menu>
