@@ -6,14 +6,18 @@
         xmlns:lineGraph="clr-namespace:MoneyVisualizer.LineGraph"
         xmlns:quickInfoPage="clr-namespace:MoneyVisualizer.QuickInfoPage"
         xmlns:transactionsList="clr-namespace:MoneyVisualizer.TransactionsList"
+        xmlns:pieChart="clr-namespace:MoneyVisualizer.PieChart"
+        xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Main Window" Height="350" Width="525"
+        md:DialogServiceViews.IsRegistered="True">
     
     <Grid>
         <DockPanel>
             <ToolBarTray DockPanel.Dock="Top">
                 <ToolBar>
                     <Button Command="{Binding LoadTransactionsCommand}" Content="Open" />
+                    <Button Command="{Binding SaveTransactionsCommand}" Content="Save" />
                 </ToolBar>
             </ToolBarTray>
             <TabControl >
@@ -27,7 +31,7 @@
                     <lineGraph:LineGraphUserControl  DataContext="{Binding LineGraphViewModel}" />
                 </TabItem>
                 <TabItem Header="Pie Chart">
-
+                    <pieChart:PieChartView DataContext="{Binding PieChartViewModel}" />
                 </TabItem>
             </TabControl>
         </DockPanel>

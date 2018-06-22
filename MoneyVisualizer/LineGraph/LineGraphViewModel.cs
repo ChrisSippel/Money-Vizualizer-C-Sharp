@@ -15,17 +15,23 @@ namespace MoneyVisualizer.LineGraph
         /// <summary>
         /// Creates a new <see cref="LineGraphViewModel"/> object.
         /// </summary>
-        /// <param name="transactions">The collections of transactions that have occurred, in string form.</param>
-        /// <param name="transactionFactory">The <see cref="ITransactionFactory"/> that will convert the raw transactions into <see cref="ITransaction"/> objects.</param>
-        public LineGraphViewModel(
-            IReadOnlyList<string> transactions,
-            ITransactionFactory transactionFactory)
+        /// <param name="transactions">The collections of transactions that have occurred, in <see cref="ITransaction"/> form.</param>
+        public LineGraphViewModel(IReadOnlyList<ITransaction> transactions)
+        {
+            LoadTransactionsIntoChart(transactions);
+        }
+
+        public SeriesCollection SeriesCollection { get; set; }
+        public string[] Labels { get; set; }
+        public Func<double, string> YFormatter { get; set; }
+
+        private void LoadTransactionsIntoChart(IReadOnlyList<ITransaction> transactions)
         {
             var dayConfig = Mappers.Xy<DateModel>()
                 .X(dateModel => dateModel.DateTime.ToFileTimeUtc())
                 .Y(dateModel => dateModel.Value);
 
-            var debitTransactions = GetDebitTransactionsFromRawTransactions(transactions, transactionFactory);
+            var debitTransactions = GetDebitTransactionsFromRawTransactions(transactions);
             var sortedTransactions = GetSortedTransactions(debitTransactions);
             HandlePossibleFirstDayMissingTransaction(sortedTransactions);
             PopulateMissingDates(sortedTransactions, debitTransactions);
@@ -62,21 +68,9 @@ namespace MoneyVisualizer.LineGraph
             };
         }
 
-        public SeriesCollection SeriesCollection { get; set; }
-        public string[] Labels { get; set; }
-        public Func<double, string> YFormatter { get; set; }
-
-        private List<DebitTransaction> GetDebitTransactionsFromRawTransactions(
-            IReadOnlyList<string> transactions,
-            ITransactionFactory transactionFactory)
+        private List<DebitTransaction> GetDebitTransactionsFromRawTransactions(IReadOnlyList<ITransaction> transactions)
         {
-            List<DebitTransaction> transactionsList = new List<DebitTransaction>();
-            foreach (string transactionLine in transactions)
-            {
-                DebitTransaction transaction = (DebitTransaction)transactionFactory.CreateDebitTransaction(transactionLine);
-                transactionsList.Add(transaction);
-            }
-
+            List<DebitTransaction> transactionsList = transactions.Cast<DebitTransaction>().ToList();
             return transactionsList;
         }
 

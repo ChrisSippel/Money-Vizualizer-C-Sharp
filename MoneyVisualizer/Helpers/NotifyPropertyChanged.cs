@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace MoneyVisualizer.Helpers.Ui
+namespace MoneyVisualizer.Helpers
 {
     public abstract class NotifyPropertyChanged : INotifyPropertyChanged
     {

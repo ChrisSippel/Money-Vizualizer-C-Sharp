@@ -8,11 +8,9 @@ namespace MoneyVisualizer.QuickInfoPage
 {
     public sealed class QuickInfoPageViewModel
     {
-        public QuickInfoPageViewModel(
-            IReadOnlyCollection<string> transactions,
-            ITransactionFactory transactionFactory)
+        public QuickInfoPageViewModel(IReadOnlyList<ITransaction> transactions)
         {
-            var debitTransactions = GetDebitTransactionsFromRawTransactions((IReadOnlyList<string>)transactions, transactionFactory);
+            var debitTransactions = GetDebitTransactionsFromRawTransactions(transactions);
 
             StartingValue = debitTransactions.First().AccountBalance - debitTransactions.First().Value;
             EndingValue = debitTransactions.Last().AccountBalance;
@@ -31,17 +29,9 @@ namespace MoneyVisualizer.QuickInfoPage
 
         public double TotalMade { get; }
 
-        private List<DebitTransaction> GetDebitTransactionsFromRawTransactions(
-            IReadOnlyList<string> transactions,
-            ITransactionFactory transactionFactory)
+        private List<DebitTransaction> GetDebitTransactionsFromRawTransactions(IReadOnlyList<ITransaction> transactions)
         {
-            List<DebitTransaction> transactionsList = new List<DebitTransaction>();
-            foreach (string transactionLine in transactions)
-            {
-                DebitTransaction transaction = (DebitTransaction)transactionFactory.CreateDebitTransaction(transactionLine);
-                transactionsList.Add(transaction);
-            }
-
+            List<DebitTransaction> transactionsList = transactions.Cast<DebitTransaction>().ToList();
             return transactionsList;
         }
     }

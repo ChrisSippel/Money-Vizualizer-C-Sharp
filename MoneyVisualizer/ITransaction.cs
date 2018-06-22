@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using MoneyVisualizer.Helpers;
 
 namespace MoneyVisualizer
 {
     /// <summary>
     /// The interface that represents a bank transaction
     /// </summary>
-    public interface ITransaction
+    public interface ITransaction : INotifyPropertyChanged
     {
         /// <summary>
         /// The date and time the transaction occurred.
@@ -19,31 +17,54 @@ namespace MoneyVisualizer
         /// <summary>
         /// The description of the transaction.
         /// </summary>
-        string Description { get; }
+        string Description { get; set; }
 
         /// <summary>
         /// The monetary value of the transaction.
         /// </summary>
         decimal Value { get; }
+
+        /// <summary>
+        /// The vendor the transaction happened with.
+        /// </summary>
+        string Vendor { get; set; }
+
+        /// <summary>
+        /// The category assigned to the transaction.
+        /// </summary>
+        string Category { get; set; }
     }
 
     /// <summary>
     /// An attempt to make instances of <see cref="ITransaction"/> not use null.
     /// </summary>
-    public sealed class NoneTransaction : ITransaction
+    public sealed class NoneTransaction : NotifyPropertyChanged, ITransaction
     {
         private NoneTransaction()
         {
-            DateTime = DateTime.MinValue;
-            Description = string.Empty;
-            Value = -1;
         }
 
-        public DateTime DateTime { get; }
+        public DateTime DateTime { get; } = DateTime.MinValue;
 
-        public string Description { get; }
+        public string Description
+        {
+            get { return string.Empty; }
+            set { }
+        }
 
-        public decimal Value { get; }
+        public decimal Value { get; } = decimal.MinValue;
+
+        public string Vendor
+        {
+            get  { return string.Empty; }
+            set { }
+        }
+
+        public string Category
+        {
+            get { return string.Empty; }
+            set { }
+        }
 
         public static NoneTransaction Instance { get; } = new NoneTransaction();
     }

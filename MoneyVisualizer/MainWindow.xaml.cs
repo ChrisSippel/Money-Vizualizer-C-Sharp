@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using MvvmDialogs;
 
 namespace MoneyVisualizer
 {
@@ -10,7 +11,7 @@ namespace MoneyVisualizer
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel();
+            DataContext = new MainWindowViewModel(new DialogService());
         }
     }
 }

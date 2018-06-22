@@ -8,14 +8,12 @@ namespace MoneyVisualizer.TransactionsList
 {
     public sealed class TransactionsListViewModel
     {
-        public TransactionsListViewModel(
-            IReadOnlyList<string> transactions,
-            ITransactionFactory transactionFactory)
+        public TransactionsListViewModel(IReadOnlyList<ITransaction> transactions)
         {
             var transactionViews = new TransactionView[transactions.Count];
             for (int i = 0; i < transactions.Count; i++)
             {
-                var transaction = transactionFactory.CreateDebitTransaction(transactions[i]);
+                var transaction = (DebitTransaction)transactions[i];
                 var transactionViewModel = new TransactionViewModel(transaction);
                 var transactionView = new TransactionView
                 {
