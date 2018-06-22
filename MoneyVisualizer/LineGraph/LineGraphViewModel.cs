@@ -7,6 +7,7 @@ using System.Linq;
 using LiveCharts;
 using LiveCharts.Configurations;
 using LiveCharts.Wpf;
+using MoneyVisualizer.Helpers;
 using MoneyVisualizer.Helpers.EventHandlers;
 
 namespace MoneyVisualizer.LineGraph
@@ -14,9 +15,10 @@ namespace MoneyVisualizer.LineGraph
     /// <summary>
     /// The view model that represents the Line Graph view of the app.
     /// </summary>
-    public sealed class LineGraphViewModel
+    public sealed class LineGraphViewModel : NotifyPropertyChanged
     {
         private readonly IReadOnlyList<ITransaction> _transactions;
+        private SeriesCollection _seriesCollection;
 
         /// <summary>
         /// Creates a new <see cref="LineGraphViewModel"/> object.
@@ -36,7 +38,24 @@ namespace MoneyVisualizer.LineGraph
             LoadTransactionsIntoChart();
         }
 
-        public SeriesCollection SeriesCollection { get; set; }
+        public SeriesCollection SeriesCollection
+        {
+            get
+            {
+                return _seriesCollection;
+            }
+
+            set
+            {
+                if (_seriesCollection == value)
+                {
+                    return;
+                }
+
+                _seriesCollection = value;
+                OnPropertyChanged();
+            }
+        }
         public string[] Labels { get; set; }
         public Func<double, string> YFormatter { get; set; }
 
@@ -119,7 +138,9 @@ namespace MoneyVisualizer.LineGraph
             int month = transactionsList.First().DateTime.Month;
             int maxDateValue = transactionsList.Max(x => x.DateTime).Day + 1;
 
-            for (int i = 1; i < maxDateValue; i++)
+            int daysInMonth = DateTime.DaysInMonth(year, month);
+
+            for (int i = 1; i < daysInMonth; i++)
             {
                 DateTime date = new DateTime(year, month, i);
                 if (accountBalanaceByDate.ContainsKey(date))
