@@ -37,6 +37,11 @@ namespace MoneyVisualizer.QuickInfoPage
 
         private void SetProperties()
         {
+            if (!_transactions.Any())
+            {
+                return;
+            }
+
             StartingValue = _transactions.First().AccountBalance - _transactions.First().Value;
             EndingValue = _transactions.Last().AccountBalance;
             EndingDifference = EndingValue - StartingValue;

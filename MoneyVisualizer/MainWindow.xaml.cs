@@ -11,7 +11,9 @@ namespace MoneyVisualizer
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel(new DialogService());
+            DataContext = new MainWindowViewModel(
+                new DialogService(),
+                new TransactionsManager(new TransactionsFactory()));
         }
     }
 }

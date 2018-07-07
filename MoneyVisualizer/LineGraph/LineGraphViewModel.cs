@@ -61,6 +61,11 @@ namespace MoneyVisualizer.LineGraph
 
         private void LoadTransactionsIntoChart()
         {
+            if (!_transactions.Any())
+            {
+                return;
+            }
+
             var dayConfig = Mappers.Xy<DateModel>()
                 .X(dateModel => dateModel.DateTime.ToFileTimeUtc())
                 .Y(dateModel => dateModel.Value);

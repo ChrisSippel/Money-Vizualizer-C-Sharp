@@ -20,17 +20,24 @@ namespace MoneyVisualizer.TransactionsList
         public IEnumerable<string> CategoryTypes { get; } = new List<string>
         {
             "Unknown",
-            "Income",
-            "Savings",
-            "Mortgage",
+            "Alcohol",
             "Bills",
+            "Charity",
             "Credit Card",
             "Car payment",
             "Eating out",
+            "Entertainment",
+            "Gas",
             "Groceries",
-            "Shopping",
+            "Income",
+            "Insurance",
+            "Mortgage",
+            "Personal Care",
             "Pets",
-            "Alcohol"
+            "Savings",
+            "Shopping",
+            "Taxes",
+            "Video Games",
         };
 
         public DateTime DateTime =>_transaction.DateTime;

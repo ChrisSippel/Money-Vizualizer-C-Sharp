@@ -19,9 +19,13 @@
                     <Menu>
                         <MenuItem Header="Open">
                             <MenuItem Header="Money Visualizer" Command="{Binding LoadMoneyVisualizerTransactionsCommand}" />
-                            <MenuItem Header="TD Bank Account" Command="{Binding LoadTdBankAccountTransactionsCommand}" />
-                            <MenuItem Header="TD Credit Card" Command="{Binding LoadTdCreditCardTransactionsCommand}" />
-                            <MenuItem Header="Capital One Credit Card" />
+                            <MenuItem Header="TC Canada Trust">
+                                <MenuItem Header="TD Bank Account" Command="{Binding LoadTdBankAccountTransactionsCommand}" />
+                                <MenuItem Header="TD Credit Card" Command="{Binding LoadTdCreditCardTransactionsCommand}" />
+                            </MenuItem>
+                            <MenuItem Header="Capital One">
+                                <MenuItem Header="Capital One Credit Card" />
+                            </MenuItem>
                         </MenuItem>
                     </Menu>
                     <Button Command="{Binding SaveTransactionsCommand}" Content="Save" />

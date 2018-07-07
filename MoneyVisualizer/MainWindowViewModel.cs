@@ -23,6 +23,7 @@ namespace MoneyVisualizer
     public sealed class MainWindowViewModel : NotifyPropertyChanged
     {
         private readonly IDialogService _dialogService;
+        private readonly ITransactionsManager _transactionsManager;
         private LineGraphViewModel _lineGraphViewModel;
         private QuickInfoPageViewModel _quickInfoPageViewModel;
         private TransactionsListViewModel _transactionsListViewModel;
@@ -32,7 +33,7 @@ namespace MoneyVisualizer
         /// <summary>
         /// Creates a mew <see cref="MainWindowViewModel"/> object.
         /// </summary>
-        public MainWindowViewModel(IDialogService dialogService)
+        public MainWindowViewModel(IDialogService dialogService, ITransactionsManager transactionsManager)
         {
             LoadTdBankAccountTransactionsCommand = new RelayCommand(LoadTdBankAccountTransactions);
             LoadMoneyVisualizerTransactionsCommand = new RelayCommand(LoadMoneyVisualizerTransactions);
@@ -41,6 +42,7 @@ namespace MoneyVisualizer
             SaveTransactionsCommand = new RelayCommand(SaveTransactions);
 
             _dialogService = dialogService;
+            _transactionsManager = transactionsManager;
         }
 
         /// <summary>
@@ -151,6 +153,10 @@ namespace MoneyVisualizer
             }
         }
 
+        /// <summary>
+        /// The view model for displaying all of the categories of the transactions
+        /// and how much money is assigned to each category.
+        /// </summary>
         public PieChartViewModel PieChartViewModel
         {
             get
@@ -189,8 +195,13 @@ namespace MoneyVisualizer
 
         private void LoadTransactions(SupportedTransactionTypes transactionsType)
         {
-            var stringTransactions = LoadTransactionsFromFile();
-            var transactions = CreateTransactionsFromFile(stringTransactions.ToArray(), transactionsType);
+            var transactionsFilePath = GetTransactionsFilePath();
+            if (string.IsNullOrWhiteSpace(transactionsFilePath))
+            {
+                return;
+            }
+
+            var transactions = _transactionsManager.CreateTransactionsFromFile(transactionsFilePath, transactionsType);
             var observableTransactions = new ObservableCollection<ITransaction>(transactions);
 
             Transactions = observableTransactions;
@@ -201,60 +212,17 @@ namespace MoneyVisualizer
             PieChartViewModel = new PieChartViewModel(Transactions);
         }
 
-        private void ReplaceTransactions(Func<ITransaction, bool> toReplaceFunc, SupportedTransactionTypes transactionsType)
+        private void ReplaceTransactions(Func<ITransaction, bool> toReplaceFunc, SupportedTransactionTypes supportedTransactionType)
         {
-            var transactionsToRemove = _transactions.Where(toReplaceFunc).ToList();
-
-            var stringTransactions = LoadTransactionsFromFile();
-            var newTransactions = CreateTransactionsFromFile(stringTransactions.ToArray(), transactionsType);
-
-            foreach (var newTransaction in newTransactions)
-            {
-                var transactionsByDate = _transactions.GroupBy(x => x.DateTime);
-                IGrouping<DateTime, ITransaction> transactionsForDate = null;
-                if (transactionsByDate.Any(x => x.Key.Equals(newTransaction.DateTime)))
-                {
-                    transactionsForDate = transactionsByDate.Last(x => x.Key.Equals(newTransaction.DateTime));
-                }
-                else
-                {
-                    var dateTimeToCheckFor = newTransaction.DateTime.AddDays(-1);
-                    while (transactionsForDate == null)
-                    {
-                        if (transactionsByDate.Any(x => x.Key.Equals(dateTimeToCheckFor)))
-                        {
-                            transactionsForDate = transactionsByDate.Last(x => x.Key.Equals(dateTimeToCheckFor));
-                            break;
-                        }
-
-                        dateTimeToCheckFor = dateTimeToCheckFor.AddDays(-1);
-                    }
-                }
-                
-                var lastTransactionForDate = transactionsForDate.Last();
-
-                // use '+' because all of the values will be negative
-                var newAccountBalance = lastTransactionForDate.AccountBalance + newTransaction.Value;
-
-                var mostFinalTransaction = new Transaction(
-                    newTransaction.DateTime,
-                    newTransaction.Vendor,
-                    newTransaction.Value,
-                    newAccountBalance,
-                    newTransaction.Description,
-                    newTransaction.Category);
-
-                // Add to _transactions so at the top of the loop, we can pull in this transaction.
-                _transactions.Add(mostFinalTransaction);
-            }
-
-            foreach (var transaction in transactionsToRemove)
-            {
-                _transactions.Remove(transaction);
-            }
+            string transactionsFile = GetTransactionsFilePath();
+            _transactionsManager.ReplaceWithTransactionsFromFile(
+                toReplaceFunc,
+                transactionsFile,
+                _transactions,
+                supportedTransactionType);
         }
 
-        private IEnumerable<string> LoadTransactionsFromFile()
+        private string GetTransactionsFilePath()
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
@@ -266,36 +234,10 @@ namespace MoneyVisualizer
             bool? result = openFileDialog.ShowDialog();
             if (!result.HasValue || !result.Value)
             {
-                return Enumerable.Empty<string>();
+                return string.Empty;
             }
 
-            var transactions = new List<string>();
-            using (StreamReader reader = new StreamReader(openFileDialog.FileName))
-            {
-                while (!reader.EndOfStream)
-                {
-                    string line = reader.ReadLine();
-                    transactions.Add(line);
-                }
-            }
-
-            return transactions;
-        }
-
-        private IEnumerable<ITransaction> CreateTransactionsFromFile(IReadOnlyList<string> transactions, SupportedTransactionTypes transactionsType)
-        {
-            var transactionsFactory = new TransactionsFactory();
-            var transactionsList = new List<ITransaction>();
-            foreach (var transaction in transactions)
-            {
-                var createdTransaction = transactionsFactory.CreateTransaction(transaction, transactionsType);
-                if (createdTransaction != NoneTransaction.Instance)
-                {
-                    transactionsList.Add(createdTransaction);
-                }
-            }
-
-            return transactionsList;
+            return openFileDialog.FileName;
         }
 
         private void SaveTransactions(object obj)
