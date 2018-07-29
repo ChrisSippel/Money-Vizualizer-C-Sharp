@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoneyVisualizer.TransactionsList;
+using System;
 
 namespace MoneyVisualizer
 {
@@ -31,6 +32,9 @@ namespace MoneyVisualizer
                 case SupportedTransactionTypes.MoneyVisualizer:
                     return CreateMoneyVisualizerTransaction(sections);
 
+                case SupportedTransactionTypes.CapitalOneCreditCard:
+                    return CreateCaptialOneTransaction(sections);
+
                 default:
                     return NoneTransaction.Instance;
             }
@@ -60,7 +64,13 @@ namespace MoneyVisualizer
 
             decimal accountBalance = decimal.Parse(sections[accountBalanceIndex]);
 
-            return new Transaction(dateTime, description, value, accountBalance, String.Empty, "Unknown");
+            string category = "Unknown";
+            if (description.Trim().Equals("TD MORTGAGE", StringComparison.OrdinalIgnoreCase))
+            {
+                category = "Mortgage";
+            }
+
+            return new Transaction(dateTime, description, value, accountBalance, string.Empty, category);
         }
 
         private static ITransaction CreateTdCreditCardTransaction(string[] sections)
@@ -125,6 +135,33 @@ namespace MoneyVisualizer
             string description = sections[descriptionIndex];
 
             return new Transaction(dateTime, vendor, value, accountBalance, description, category);
+        }
+
+        private static ITransaction CreateCaptialOneTransaction(string[] sections)
+        {
+            const string titleText = "Transaction Date";
+            const int purchaseDateIndex = 0;
+            const int vendorIndex = 3;
+            const int debitIndex = 5;
+            const int paymentAndCreditIndex = 6;
+
+            // If we're looking at the title text, or a credit/payment transaction
+            // skip it
+            if (sections[0] == titleText ||
+                !string.IsNullOrWhiteSpace(sections[paymentAndCreditIndex]))
+            {
+                return NoneTransaction.Instance;
+            }
+
+            decimal debit;
+            DateTime purchaseDateTime;
+            if (!decimal.TryParse(sections[debitIndex], out debit) ||
+                !DateTime.TryParse(sections[purchaseDateIndex], out purchaseDateTime))
+            {
+                return NoneTransaction.Instance;
+            }
+
+            return new Transaction(purchaseDateTime, sections[vendorIndex], debit, 0, string.Empty, CategoryTypes.List.GetEnumerator().Current);
         }
     }
 }

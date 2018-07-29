@@ -24,7 +24,7 @@
                                 <MenuItem Header="TD Credit Card" Command="{Binding LoadTdCreditCardTransactionsCommand}" />
                             </MenuItem>
                             <MenuItem Header="Capital One">
-                                <MenuItem Header="Capital One Credit Card" />
+                                <MenuItem Header="Capital One Credit Card" Command="{Binding LoadCapitalOneCreditCardTransactionsCommand}"/>
                             </MenuItem>
                         </MenuItem>
                     </Menu>

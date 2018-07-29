@@ -38,6 +38,7 @@ namespace MoneyVisualizer
             LoadTdBankAccountTransactionsCommand = new RelayCommand(LoadTdBankAccountTransactions);
             LoadMoneyVisualizerTransactionsCommand = new RelayCommand(LoadMoneyVisualizerTransactions);
             LoadTdCreditCardTransactionsCommand = new RelayCommand(LoadTdCreditCardTransactions);
+            LoadCapitalOneCreditCardTransactionsCommand = new RelayCommand(LoadCapitalOneCreditCardTransactions);
 
             SaveTransactionsCommand = new RelayCommand(SaveTransactions);
 
@@ -59,6 +60,11 @@ namespace MoneyVisualizer
         /// The command to call when the user wants to load transactions from a TD credit card.
         /// </summary>
         public ICommand LoadTdCreditCardTransactionsCommand { get; }
+
+        /// <summary>
+        /// The command to call when the user wants to load transactions from a Capital One credit card.
+        /// </summary>
+        public ICommand LoadCapitalOneCreditCardTransactionsCommand { get; }
 
         /// <summary>
         /// The command to call when the user wants to load transactions.
@@ -191,6 +197,13 @@ namespace MoneyVisualizer
         private void LoadMoneyVisualizerTransactions(object obj)
         {
             LoadTransactions(SupportedTransactionTypes.MoneyVisualizer);
+        }
+
+        private void LoadCapitalOneCreditCardTransactions(object obj)
+        {
+            Func<ITransaction, bool> toReplaceFunc = transaction => transaction.Category == "Credit Card";
+
+            ReplaceTransactions(toReplaceFunc, SupportedTransactionTypes.CapitalOneCreditCard);
         }
 
         private void LoadTransactions(SupportedTransactionTypes transactionsType)

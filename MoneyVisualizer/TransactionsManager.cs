@@ -64,27 +64,32 @@ namespace MoneyVisualizer
             // Find the Date/Time grouping the replacement transactions belong to, and add them to that grouping.
             foreach (var replacementTransaction in replacementTransactions)
             {
-                IGrouping<DateTime, ITransaction> transactionsForDate = null;
+                ITransaction lastTransactionForDate = null;
                 if (transactionsByDate.Any(x => x.Key.Equals(replacementTransaction.DateTime)))
                 {
-                    transactionsForDate = transactionsByDate.Last(x => x.Key.Equals(replacementTransaction.DateTime));
+                    lastTransactionForDate = transactionsByDate.Last(x => x.Key.Equals(replacementTransaction.DateTime)).Last();
                 }
                 else
                 {
                     var dateTimeToCheckFor = replacementTransaction.DateTime.AddDays(-1);
-                    while (transactionsForDate == null)
+                    while (lastTransactionForDate == null)
                     {
                         if (transactionsByDate.Any(x => x.Key.Equals(dateTimeToCheckFor)))
                         {
-                            transactionsForDate = transactionsByDate.Last(x => x.Key.Equals(dateTimeToCheckFor));
+                            lastTransactionForDate = transactionsByDate.Last(x => x.Key.Equals(dateTimeToCheckFor)).Last();
                             break;
+                        }
+
+                        if (dateTimeToCheckFor.Month != replacementTransaction.DateTime.Month)
+                        {
+                            // If the transaction to replace/add comes before any existing transactions
+                            // just add it to the list of transactions.
+                            lastTransactionForDate = replacementTransaction;
                         }
 
                         dateTimeToCheckFor = dateTimeToCheckFor.AddDays(-1);
                     }
                 }
-
-                var lastTransactionForDate = transactionsForDate.Last();
 
 
                 // use '+' because all of the values will be negative

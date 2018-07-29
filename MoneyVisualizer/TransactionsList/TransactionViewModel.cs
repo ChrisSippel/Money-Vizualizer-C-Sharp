@@ -12,33 +12,12 @@ namespace MoneyVisualizer.TransactionsList
         public TransactionViewModel(ITransaction transaction)
         {
             _transaction = transaction;
-            Category = !CategoryTypes.Contains(transaction.Category)
-                ? CategoryTypes.First()
+            Category = !CategoryTypes.List.Contains(transaction.Category)
+                ? CategoryTypes.List.First()
                 : transaction.Category;
         }
 
-        public IEnumerable<string> CategoryTypes { get; } = new List<string>
-        {
-            "Unknown",
-            "Alcohol",
-            "Bills",
-            "Charity",
-            "Credit Card",
-            "Car payment",
-            "Eating out",
-            "Entertainment",
-            "Gas",
-            "Groceries",
-            "Income",
-            "Insurance",
-            "Mortgage",
-            "Personal Care",
-            "Pets",
-            "Savings",
-            "Shopping",
-            "Taxes",
-            "Video Games",
-        };
+        public IEnumerable<string> Categories { get; } = CategoryTypes.List;
 
         public DateTime DateTime =>_transaction.DateTime;
 

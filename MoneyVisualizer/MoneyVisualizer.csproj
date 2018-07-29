@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="QuickInfoPage\QuickInfoPageViewModel.cs" />
     <Compile Include="TransactionsFactory.cs" />
+    <Compile Include="TransactionsList\CategoryTypes.cs" />
     <Compile Include="TransactionsList\TransactionsListView.xaml.cs">
       <DependentUpon>TransactionsListView.xaml</DependentUpon>
     </Compile>

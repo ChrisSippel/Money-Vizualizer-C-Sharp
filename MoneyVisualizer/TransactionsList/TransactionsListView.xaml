@@ -7,6 +7,14 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <ListBox ItemsSource="{Binding Transactions}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="White" Grid.Row="0">
+            <TextBlock Width="100" Text="Filter on: " Margin="0,3,200,0" />
+            <ComboBox Width="100" Margin="55,0,145,0" ItemsSource="{Binding Filters}" SelectedValue="{Binding CurrentFilter, Mode=TwoWay}" />
+        </Grid>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Transactions}"/>
     </Grid>
 </UserControl>
