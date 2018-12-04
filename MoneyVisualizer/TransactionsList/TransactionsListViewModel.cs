@@ -11,7 +11,6 @@ namespace MoneyVisualizer.TransactionsList
     {
         private const string NoFilter = "Nothing";
         private readonly IReadOnlyList<ITransaction> _transactions;
-        private IReadOnlyList<TransactionView> _transactionViews;
         private string _filter;
 
         public TransactionsListViewModel(ObservableCollection<ITransaction> transactions)
@@ -54,9 +53,11 @@ namespace MoneyVisualizer.TransactionsList
             }
         }
 
+        public IReadOnlyList<ITransactionViewModel> Transactions { get; private set; }
+
         private void UpdateTransactionsList()
         {
-            var transactionViews = new List<TransactionView>();
+            var transactionViewModels = new List<TransactionViewModel>();
             for (int i = 0; i < _transactions.Count; i++)
             {
                 var transaction = (Transaction)_transactions[i];
@@ -67,35 +68,12 @@ namespace MoneyVisualizer.TransactionsList
                 }
 
                 var transactionViewModel = new TransactionViewModel(transaction);
-                var transactionView = new TransactionView
-                {
-                    DataContext = transactionViewModel,
-                };
-
-                transactionViews.Add(transactionView);
+                transactionViewModels.Add(transactionViewModel);
             }
 
-            Transactions = transactionViews;
-        }
+            Transactions = new ReadOnlyCollection<TransactionViewModel>(transactionViewModels);
 
-        public IReadOnlyList<TransactionView> Transactions
-        {
-            get
-            {
-                return  _transactionViews;
-            }
-
-            set
-            {
-                if (_transactionViews != null &&
-                    _transactionViews.Equals(value))
-                {
-                    return;
-                }
-
-                _transactionViews = value;
-                OnPropertyChanged();
-            }
+            OnPropertyChanged(nameof(Transactions));
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)

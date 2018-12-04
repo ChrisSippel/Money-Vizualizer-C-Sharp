@@ -9,15 +9,19 @@ namespace MoneyVisualizer.TransactionsList
             "Unknown",
             "Alcohol",
             "Bills",
+            "Cash",
             "Charity",
             "Clothing",
             "Credit Card",
             "Car payment",
             "Eating out",
             "Entertainment",
+            "E-Transfer",
+            "Family",
             "Gas",
             "Gift",
             "Groceries",
+            "Home",
             "Income",
             "Insurance",
             "Mortgage",
@@ -27,6 +31,8 @@ namespace MoneyVisualizer.TransactionsList
             "Shopping",
             "Taxes",
             "Video Games",
+            "Work",
+            "Other",
         };
     }
 }

@@ -5,7 +5,7 @@ using MoneyVisualizer.Helpers;
 
 namespace MoneyVisualizer.TransactionsList
 {
-    public sealed class TransactionViewModel : NotifyPropertyChanged
+    public sealed class TransactionViewModel : NotifyPropertyChanged, ITransactionViewModel
     {
         private readonly ITransaction _transaction;
 

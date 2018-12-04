@@ -6,6 +6,39 @@
              xmlns:local="clr-namespace:MoneyVisualizer.TransactionsList"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <DataTemplate x:Key="TransactionsListDataTemplate">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" Grid.Row="0" Content="Vendor: "/>
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Path=Vendor, Mode=TwoWay}" Width="200" />
+
+                <Label Grid.Column="0" Grid.Row="1" Content="Date: "/>
+                <TextBox Grid.Column="1" Grid.Row="1" IsReadOnly="True" Foreground="LightGray" Text="{Binding Path=DateTime, Mode=OneWay}" />
+
+                <Label Grid.Column="0" Grid.Row="2" Content="Value: "/>
+                <TextBox Grid.Column="1" Grid.Row="2" IsReadOnly="true" Foreground="LightGray" Text="{Binding Path=Value, Mode=OneWay}" />
+
+                <Label Grid.Column="0" Grid.Row="3" Content="Description: "/>
+                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Path=Description, Mode=TwoWay}" />
+
+                <Label Grid.Column="0" Grid.Row="4" Content="Category: "/>
+                <ComboBox Name="CategoryComboBox" Grid.Column="1" Grid.Row="4" SelectedValue="{Binding Path=Category, Mode=TwoWay}" ItemsSource="{Binding Path=Categories}" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -15,6 +48,6 @@
             <TextBlock Width="100" Text="Filter on: " Margin="0,3,200,0" />
             <ComboBox Width="100" Margin="55,0,145,0" ItemsSource="{Binding Filters}" SelectedValue="{Binding CurrentFilter, Mode=TwoWay}" />
         </Grid>
-        <ListBox Grid.Row="1" ItemsSource="{Binding Transactions}"/>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Transactions}" ItemTemplate="{StaticResource TransactionsListDataTemplate}"/>
     </Grid>
 </UserControl>

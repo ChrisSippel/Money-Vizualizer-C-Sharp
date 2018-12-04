@@ -110,13 +110,11 @@
     <Compile Include="QuickInfoPage\QuickInfoPageViewModel.cs" />
     <Compile Include="TransactionsFactory.cs" />
     <Compile Include="TransactionsList\CategoryTypes.cs" />
+    <Compile Include="TransactionsList\ITransactionViewModel.cs" />
     <Compile Include="TransactionsList\TransactionsListView.xaml.cs">
       <DependentUpon>TransactionsListView.xaml</DependentUpon>
     </Compile>
     <Compile Include="TransactionsList\TransactionsListViewModel.cs" />
-    <Compile Include="TransactionsList\TransactionView.xaml.cs">
-      <DependentUpon>TransactionView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="TransactionsList\TransactionViewModel.cs" />
     <Compile Include="TransactionsManager.cs" />
     <Page Include="LineGraph\LineGraphUserControl.xaml">
@@ -144,10 +142,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TransactionsList\TransactionsListView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="TransactionsList\TransactionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
