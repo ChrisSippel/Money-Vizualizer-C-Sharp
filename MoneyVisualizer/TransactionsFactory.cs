@@ -161,6 +161,8 @@ namespace MoneyVisualizer
                 return NoneTransaction.Instance;
             }
 
+            debit *= -1;
+
             return new Transaction(purchaseDateTime, sections[vendorIndex], debit, 0, string.Empty, CategoryTypes.List.GetEnumerator().Current);
         }
     }
